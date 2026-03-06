@@ -1,18 +1,58 @@
-document.addEventListener('DOMContentLoaded', function() {const form = document.getElementById('training-form');const profileDisplay = document.getElementById('profile-display');const trainingPlanDisplay = document.getElementById('training-plan');
+window.onload = function() {
+    const form = document.getElementById('trainingForm');
+    form.addEventListener('submit', handleSubmit);
+};
 
-form.addEventListener('submit', function(event) {event.preventDefault();const name = document.getElementById('name').value;const age = document.getElementById('age').value;const breed = document.getElementById('breed').value;
+function handleSubmit(event) {
+    event.preventDefault();
+    const profile = {
+        name: document.getElementById('name').value,
+        age: document.getElementById('age').value,
+        trainingGoals: document.getElementById('trainingGoals').value
+    };
+    displayProfile(profile);
+    generateTrainingPlan(profile.trainingGoals);
+    saveProfile(profile);
+}
 
-// Save the profile in local storage
-const profile = { name, age, breed };localStorage.setItem('puppyProfile', JSON.stringify(profile));
+function displayProfile(profile) {
+    const profileDisplay = document.getElementById('profileDisplay');
+    profileDisplay.innerText = `Name: ${profile.name}, Age: ${profile.age}`;
+}
 
-displayProfile(profile);generateTrainingPlan(age, breed);
-});
+function generateTrainingPlan(goal) {
+    let plan;
+    switch (goal) {
+        case 'potty training':
+            plan = 'Start with regular bathroom breaks and rewards for going outside.';
+            break;
+        case 'leash walking':
+            plan = 'Practice short walks with positive reinforcement for good behavior.';
+            break;
+        case 'bite inhibition':
+            plan = 'Use toys to redirect biting behavior and encourage gentle play.';
+            break;
+        case 'socialization':
+            plan = 'Introduce your puppy to new environments, people, and other dogs gradually.';
+            break;
+        default:
+            plan = 'Consult a professional trainer for tailored advice.';
+    }
+    displayTrainingPlan(plan);
+}
 
-function displayProfile(profile) {profileDisplay.textContent = `Name: ${profile.name}, Age: ${profile.age}, Breed: ${profile.breed}`;}
+function displayTrainingPlan(plan) {
+    const trainingPlanDisplay = document.getElementById('trainingPlanDisplay');
+    trainingPlanDisplay.innerText = plan;
+}
 
-function generateTrainingPlan(age, breed) {let plan; // Example training plan generation logic
-if (age < 1) {plan = 'Basic commands: Sit, Stay, Come';} else {plan = 'Advanced commands: Roll over, Play dead';}
-trainingPlanDisplay.textContent = `Training Plan: ${plan}`;}
+function saveProfile(profile) {
+    let profiles = JSON.parse(localStorage.getItem('puppyProfiles')) || [];
+    profiles.push(profile);
+    localStorage.setItem('puppyProfiles', JSON.stringify(profiles));
+}
 
-// Load saved profile from local storage on page load
-const savedProfile = localStorage.getItem('puppyProfile');if (savedProfile) {const profile = JSON.parse(savedProfile);displayProfile(profile);generateTrainingPlan(profile.age, profile.breed);}});
+function loadProfiles() {
+    const profiles = JSON.parse(localStorage.getItem('puppyProfiles')) || [];
+    profiles.forEach(displayProfile);
+}
